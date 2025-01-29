@@ -35,8 +35,6 @@ Les relations seront les suivantes :
 
 ## Exercice 1: Modules
 
-Créer le projet avec la commande `nest new <nom>`.
-
 Modifier le fichier `app.module.ts` pour authoriser les requêtes depuis n'importe quelle origine (CORS).
 
 En utilisant la commande `nest generate module <nom>` vous pouvez créer un module avec les controllers, services et les types associés.
