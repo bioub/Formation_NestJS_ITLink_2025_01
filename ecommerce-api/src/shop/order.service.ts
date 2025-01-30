@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+
+import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderEntity } from './entity/order.entity';
 
 @Injectable()
@@ -9,11 +11,11 @@ export class OrderService {
     return this.orders;
   }
 
-  create(order: any) {
+  create(order: CreateOrderDto) {
     const newOrder = {
       id: Date.now(),
-      date: new Date(),
       ...order,
+      date: new Date(),
     };
     this.orders.push(newOrder);
     return newOrder;

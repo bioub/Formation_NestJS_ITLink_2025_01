@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+
+import { CreateCategoryDto } from './dto/create-category.dto';
 import { CategoryEntity } from './entity/category.entity';
 
 @Injectable()
@@ -9,7 +11,7 @@ export class CategoryService {
     return this.categories;
   }
 
-  create(category: any) {
+  create(category: CreateCategoryDto) {
     const newCategory = {
       id: Date.now(),
       ...category,

@@ -1,11 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ProductEntity } from './entity/product.entity';
+import { CreateProductDto } from './dto/create-product.dto';
 
 @Injectable()
 export class ProductService {
-
-
-constructor(@Inject('CONFIG') private config: { searchFields: string[] }) {}
+  constructor(@Inject('CONFIG') private config: { searchFields: string[] }) {}
 
   private products: ProductEntity[] = [];
 
@@ -19,15 +18,16 @@ constructor(@Inject('CONFIG') private config: { searchFields: string[] }) {}
 
   search(query: string) {
     console.log(this.config.searchFields);
-    
+
     const lowercaseQuery = query.toLowerCase();
-    return this.products.filter((product) => 
-      product.name.toLowerCase().includes(lowercaseQuery) ||
-      product.description.toLowerCase().includes(lowercaseQuery)
+    return this.products.filter(
+      (product) =>
+        product.name.toLowerCase().includes(lowercaseQuery) ||
+        product.description.toLowerCase().includes(lowercaseQuery),
     );
   }
 
-  create(product: any) {
+  create(product: CreateProductDto) {
     const newProduct = {
       id: Date.now(),
       ...product,
@@ -36,7 +36,7 @@ constructor(@Inject('CONFIG') private config: { searchFields: string[] }) {}
     return newProduct;
   }
 
-  update(id: number, product: any) {
+  update(id: number, product: CreateProductDto) {
     const index = this.products.findIndex((p) => p.id === id);
     if (index !== -1) {
       this.products[index] = { ...this.products[index], ...product };
