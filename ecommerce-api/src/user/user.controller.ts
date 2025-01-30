@@ -1,53 +1,39 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { UserEntity } from './entity/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
-import { OrderEntity } from '../shop/entity/order.entity';
+import { UserService } from './user.service';
+import { OrderEntity } from 'src/shop/entity/order.entity';
 
 @Controller('users')
 export class UserController {
+  constructor(private readonly userService: UserService) {}
+
   @Get()
   getUsers(): UserEntity[] {
-    // TODO: Implémenter la logique
-    return [];
+    return this.userService.getAll();
   }
 
   @Get(':id')
-  getUserById(@Param('id') id: string): UserEntity {
-    // TODO: Implémenter la logique
-    return {
-      id: +id,
-      name: 'Example User',
-      email: 'user@example.com',
-      password: '********'
-    };
+  getUserById(@Param('id') id: string): UserEntity | null {
+    return this.userService.getById(+id);
   }
 
   @Post()
   createUser(@Body() createUserDto: CreateUserDto): UserEntity {
-    // TODO: Implémenter la logique
-    return {
-      id: 1,
-      ...createUserDto
-    };
+    return this.userService.create(createUserDto);
   }
 
   @Patch(':id')
   updateUser(
     @Param('id') id: string,
     @Body() updateUserDto: Partial<CreateUserDto>,
-  ): UserEntity {
-    // TODO: Implémenter la logique
-    return {
-      id: +id,
-      name: 'Updated User',
-      email: 'updated@example.com',
-      password: '********'
-    };
+  ): UserEntity | null {
+    return this.userService.update(+id, updateUserDto);
   }
 
   @Delete(':id')
-  deleteUser(@Param('id') id: string): void {
-    // TODO: Implémenter la logique
+  deleteUser(@Param('id') id: string): UserEntity | null {
+    return this.userService.delete(+id);
   }
 
   @Get(':id/orders')

@@ -1,54 +1,40 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { ProductEntity } from './entity/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
+import { ProductService } from './product.service';
 
 @Controller('products')
 export class ProductController {
+  constructor(private readonly productService: ProductService) {}
+
   @Get()
   getProducts(@Query('search') search?: string): ProductEntity[] {
-    // TODO: Implémenter la logique
-    return [];
+    if (search) {
+      return this.productService.search(search);
+    }
+    return this.productService.getAll();
   }
 
   @Get(':id')
-  getProductById(@Param('id') id: string): ProductEntity {
-    // TODO: Implémenter la logique
-    return {
-      id: +id,
-      name: 'Example Product',
-      description: 'Example Description',
-      price: 99.99,
-      category: undefined
-    };
+  getProductById(@Param('id') id: string): ProductEntity | null {
+    return this.productService.getById(+id);
   }
 
   @Post()
   createProduct(@Body() createProductDto: CreateProductDto): ProductEntity {
-    // TODO: Implémenter la logique
-    return {
-      id: 1,
-      ...createProductDto,
-      category: undefined
-    };
+    return this.productService.create(createProductDto);
   }
 
   @Patch(':id')
   updateProduct(
     @Param('id') id: string,
     @Body() updateProductDto: Partial<CreateProductDto>,
-  ): ProductEntity {
-    // TODO: Implémenter la logique
-    return {
-      id: +id,
-      name: 'Updated Product',
-      description: 'Updated Description',
-      price: 199.99,
-      category: undefined
-    };
+  ): ProductEntity | null {
+    return this.productService.update(+id, updateProductDto);
   }
 
   @Delete(':id')
-  deleteProduct(@Param('id') id: string): void {
-    // TODO: Implémenter la logique
+  deleteProduct(@Param('id') id: string): ProductEntity | null {
+    return this.productService.delete(+id);
   }
 }
