@@ -16,6 +16,10 @@ export class CategoryService {
     return this.categoryRepository.find();
   }
 
+  async getById(id: number): Promise<CategoryEntity | null> {
+    return this.categoryRepository.findOneBy({ id });
+  }
+
   async create(category: CreateCategoryDto) {
     return this.categoryRepository.save(category);
   }

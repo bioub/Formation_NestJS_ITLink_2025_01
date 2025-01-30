@@ -27,6 +27,4 @@ export class OrderController {
 
     return deleted;
   }
-
-  
 }

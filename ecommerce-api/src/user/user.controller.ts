@@ -3,10 +3,14 @@ import { UserEntity } from './entity/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
 import { OrderEntity } from 'src/shop/entity/order.entity';
+import { OrderService } from 'src/shop/order.service';
 
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly orderService: OrderService,
+  ) {}
 
   @Get()
   async getProducts(): Promise<UserEntity[]> {
@@ -52,7 +56,13 @@ export class UserController {
   }
 
   @Get(':id/orders')
-  getOrdersByUser(@Param('id') id: string): OrderEntity[] {
-    return [];
+  async getOrdersByUser(@Param('id') id: string): Promise<OrderEntity[]> {
+    const user = await this.userService.getById(+id);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return this.orderService.getByUser(user);
   }
 }

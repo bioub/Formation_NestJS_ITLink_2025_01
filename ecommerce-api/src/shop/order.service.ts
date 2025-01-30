@@ -4,6 +4,7 @@ import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderEntity } from './entity/order.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserEntity } from 'src/user/entity/user.entity';
 
 @Injectable()
 export class OrderService {
@@ -13,7 +14,16 @@ export class OrderService {
   ) {}
 
   async getAll() {
-    return this.orderRepository.find();
+    return this.orderRepository.find({
+      relations: ['products', 'user'],
+    });
+  }
+
+  async getByUser(user: UserEntity) {
+    return this.orderRepository.find({
+      where: { user },
+      relations: ['products', 'user'],
+    });
   }
 
   async create(order: CreateOrderDto) {
