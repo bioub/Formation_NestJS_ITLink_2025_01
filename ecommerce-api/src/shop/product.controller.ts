@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, NotFoundException } from '@nestjs/common';
 import { ProductEntity } from './entity/product.entity';
 import { CreateProductDto } from './dto/create-product.dto';
 import { ProductService } from './product.service';
@@ -8,7 +8,7 @@ export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   @Get()
-  getProducts(@Query('search') search?: string): ProductEntity[] {
+  async getProducts(@Query('search') search?: string): Promise<ProductEntity[]> {
     if (search) {
       return this.productService.search(search);
     }
@@ -16,25 +16,40 @@ export class ProductController {
   }
 
   @Get(':id')
-  getProductById(@Param('id') id: string): ProductEntity | null {
-    return this.productService.getById(+id);
+  async getProductById(@Param('id') id: string): Promise<ProductEntity> {
+    const product = await this.productService.getById(+id);
+
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+
+    return product;
   }
 
   @Post()
-  createProduct(@Body() createProductDto: CreateProductDto): ProductEntity {
+  async createProduct(@Body() createProductDto: CreateProductDto): Promise<ProductEntity> {
     return this.productService.create(createProductDto);
   }
 
   @Patch(':id')
-  updateProduct(
-    @Param('id') id: string,
-    @Body() updateProductDto: Partial<CreateProductDto>,
-  ): ProductEntity | null {
-    return this.productService.update(+id, updateProductDto);
+  async updateProduct(@Param('id') id: string, @Body() updateProductDto: CreateProductDto): Promise<ProductEntity> {
+    const product = await this.productService.update(+id, updateProductDto);
+
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+
+    return product;
   }
 
   @Delete(':id')
-  deleteProduct(@Param('id') id: string): ProductEntity | null {
-    return this.productService.delete(+id);
+  async deleteProduct(@Param('id') id: string): Promise<ProductEntity> {
+    const product = await this.productService.delete(+id);
+
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+
+    return product;
   }
 }

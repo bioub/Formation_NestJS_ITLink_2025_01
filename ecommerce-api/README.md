@@ -149,7 +149,6 @@ Injecter ce service de config dans `ProductService` de sorte a ce que la méthod
 
 Installer @nestjs/config puis créer un fichier .env avec les variables de configuration suivantes :
 - JWT_SECRET : string
-- DB_TYPE : 'sqlite'
 - DB_DATABASE : 'chemin_vers_le_fichier.sqlite'
 
 Installer @nestjs/typeorm puis le configurer avec une base de données SQLite (dans /data/db.sqlite), s'inspirer de cette documentation :

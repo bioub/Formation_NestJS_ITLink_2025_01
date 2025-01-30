@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException } from '@nestjs/common';
 import { UserEntity } from './entity/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
@@ -9,36 +9,50 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  getUsers(): UserEntity[] {
+  async getProducts(): Promise<UserEntity[]> {
     return this.userService.getAll();
   }
 
   @Get(':id')
-  getUserById(@Param('id') id: string): UserEntity | null {
-    return this.userService.getById(+id);
+  async getProductById(@Param('id') id: string): Promise<UserEntity> {
+    const product = await this.userService.getById(+id);
+
+    if (!product) {
+      throw new NotFoundException('User not found');
+    }
+
+    return product;
   }
 
   @Post()
-  createUser(@Body() createUserDto: CreateUserDto): UserEntity {
+  async createProduct(@Body() createUserDto: CreateUserDto): Promise<UserEntity> {
     return this.userService.create(createUserDto);
   }
 
   @Patch(':id')
-  updateUser(
-    @Param('id') id: string,
-    @Body() updateUserDto: Partial<CreateUserDto>,
-  ): UserEntity | null {
-    return this.userService.update(+id, updateUserDto);
+  async updateProduct(@Param('id') id: string, @Body() updateUserDto: CreateUserDto): Promise<UserEntity> {
+    const product = await this.userService.update(+id, updateUserDto);
+
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+
+    return product;
   }
 
   @Delete(':id')
-  deleteUser(@Param('id') id: string): UserEntity | null {
-    return this.userService.delete(+id);
+  async deleteProduct(@Param('id') id: string): Promise<UserEntity> {
+    const product = await this.userService.delete(+id);
+
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+
+    return product;
   }
 
   @Get(':id/orders')
   getOrdersByUser(@Param('id') id: string): OrderEntity[] {
-    // TODO: Implémenter la logique
     return [];
   }
 }

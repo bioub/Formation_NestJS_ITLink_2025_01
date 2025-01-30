@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "ecommerce-api"
+		},
+		{
+			"path": "hello-nest"
+		},
+		{
+			"path": "Node.js"
+		}
+	],
+	"settings": {}
+}

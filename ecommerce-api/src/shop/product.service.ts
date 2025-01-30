@@ -1,57 +1,66 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { ProductEntity } from './entity/product.entity';
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+
 import { CreateProductDto } from './dto/create-product.dto';
+import { ProductEntity } from './entity/product.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ProductService {
-  constructor(@Inject('CONFIG') private config: { searchFields: string[] }) {}
+  constructor(
+    private readonly configService: ConfigService,
+    @InjectRepository(ProductEntity)
+    private readonly productRepository: Repository<ProductEntity>,
+  ) {}
 
-  private products: ProductEntity[] = [];
-
-  getAll() {
-    return this.products;
+  async getAll(): Promise<ProductEntity[]> {
+    return this.productRepository.find();
   }
 
-  getById(id: number) {
-    return this.products.find((product) => product.id === id) ?? null;
+  async getById(id: number): Promise<ProductEntity | null> {
+    return this.productRepository.findOneBy({ id });
   }
 
-  search(query: string) {
-    console.log(this.config.searchFields);
+  async search(query: string): Promise<ProductEntity[]> {
+    const searchFieldsStr = this.configService.get<string>('PRODUCT_SEARCH_FIELDS') ?? '';
+    const searchFields = searchFieldsStr.split(',').map((field) => field.trim());
 
-    const lowercaseQuery = query.toLowerCase();
-    return this.products.filter(
-      (product) =>
-        product.name.toLowerCase().includes(lowercaseQuery) ||
-        product.description.toLowerCase().includes(lowercaseQuery),
-    );
-  }
+    let qb = this.productRepository.createQueryBuilder('product');
 
-  create(product: CreateProductDto) {
-    const newProduct = {
-      id: Date.now(),
-      ...product,
-    };
-    this.products.push(newProduct);
-    return newProduct;
-  }
-
-  update(id: number, product: CreateProductDto) {
-    const index = this.products.findIndex((p) => p.id === id);
-    if (index !== -1) {
-      this.products[index] = { ...this.products[index], ...product };
-      return this.products[index];
+    if (searchFields.length > 0) {
+      qb = qb.where(searchFields.map((field) => `LOWER(product.${field}) LIKE :query`).join(' OR '), {
+        query: `%${query.toLowerCase()}%`,
+      });
     }
-    return null;
+
+    return qb.getMany();
   }
 
-  delete(id: number) {
-    const index = this.products.findIndex((p) => p.id === id);
-    if (index !== -1) {
-      const deletedProduct = this.products[index];
-      this.products.splice(index, 1);
-      return deletedProduct;
+  async create(product: CreateProductDto): Promise<ProductEntity> {
+    return this.productRepository.save(product);
+  }
+
+  async update(id: number, product: CreateProductDto): Promise<ProductEntity | null> {
+    const updated = await this.productRepository.findOneBy({ id });
+
+    if (!updated) {
+      return null;
     }
-    return null;
+
+    await this.productRepository.update(id, product);
+
+    return updated;
+  }
+
+  async delete(id: number): Promise<ProductEntity | null> {
+    const deleted = await this.productRepository.findOneBy({ id });
+
+    if (!deleted) {
+      return null;
+    }
+
+    await this.productRepository.remove(deleted);
+    return deleted;
   }
 }

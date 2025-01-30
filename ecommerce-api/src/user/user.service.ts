@@ -1,45 +1,49 @@
 import { Injectable } from '@nestjs/common';
 
-import { CreateUserDto } from './dto/create-user.dto';
 import { UserEntity } from './entity/user.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UserService {
-  private users: UserEntity[] = [];
+  constructor(
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
+  ) {}
 
-  getAll() {
-    return this.users;
+  async getAll(): Promise<UserEntity[]> {
+    return this.userRepository.find();
   }
 
-  getById(id: number) {
-    return this.users.find((user) => user.id === id) ?? null;
+  async getById(id: number): Promise<UserEntity | null> {
+    return this.userRepository.findOneBy({ id });
   }
 
-  create(user: CreateUserDto) {
-    const newUser = {
-      id: Date.now(),
-      ...user,
-    };
-    this.users.push(newUser);
-    return newUser;
+  async create(product: CreateUserDto): Promise<UserEntity> {
+    return this.userRepository.save(product);
   }
 
-  update(id: number, user: CreateUserDto) {
-    const index = this.users.findIndex((u) => u.id === id);
-    if (index !== -1) {
-      this.users[index] = { ...this.users[index], ...user };
-      return this.users[index];
+  async update(id: number, product: CreateUserDto): Promise<UserEntity | null> {
+    const updated = await this.userRepository.findOneBy({ id });
+
+    if (!updated) {
+      return null;
     }
-    return null;
+
+    await this.userRepository.update(id, product);
+
+    return updated;
   }
 
-  delete(id: number) {
-    const index = this.users.findIndex((u) => u.id === id);
-    if (index !== -1) {
-      const deletedUser = this.users[index];
-      this.users.splice(index, 1);
-      return deletedUser;
+  async delete(id: number): Promise<UserEntity | null> {
+    const deleted = await this.userRepository.findOneBy({ id });
+
+    if (!deleted) {
+      return null;
     }
-    return null;
+
+    await this.userRepository.remove(deleted);
+    return deleted;
   }
 }

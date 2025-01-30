@@ -2,32 +2,35 @@ import { Injectable } from '@nestjs/common';
 
 import { CreateOrderDto } from './dto/create-order.dto';
 import { OrderEntity } from './entity/order.entity';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class OrderService {
-  private orders: OrderEntity[] = [];
+  constructor(
+    @InjectRepository(OrderEntity)
+    private readonly orderRepository: Repository<OrderEntity>,
+  ) {}
 
-  getAll() {
-    return this.orders;
+  async getAll() {
+    return this.orderRepository.find();
   }
 
-  create(order: CreateOrderDto) {
-    const newOrder = {
-      id: Date.now(),
-      ...order,
-      date: new Date(),
-    };
-    this.orders.push(newOrder);
-    return newOrder;
+  async create(order: CreateOrderDto) {
+    return this.orderRepository.save(order);
   }
 
-  delete(id: number) {
-    const index = this.orders.findIndex((o) => o.id === id);
-    if (index !== -1) {
-      const deletedOrder = this.orders[index];
-      this.orders.splice(index, 1);
-      return deletedOrder;
+  async delete(id: number): Promise<OrderEntity | null> {
+    const deleted = await this.orderRepository.findOneBy({
+      id,
+    });
+
+    if (!deleted) {
+      return null;
     }
-    return null;
+
+    await this.orderRepository.remove(deleted);
+
+    return deleted;
   }
 }
