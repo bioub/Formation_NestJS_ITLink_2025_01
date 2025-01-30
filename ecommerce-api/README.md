@@ -168,3 +168,21 @@ Utiliser éventuellement une library pour générer des fixtures, par exemple : 
 Injecter les repository dans nos services ProductService, OrderService, CategoryService et UserService, utiliser les méthodes des repository pour lire, ajouter, modifier, supprimer les entités.
 
 Appeler ces services dans les contrôleurs, ajouter les exceptions NotFoundException si l'enregistrement en introuvable (pour les @Param('id'))
+
+## Exercice 7 : Swagger
+
+Installer @nestjs/swagger puis le configurer dans main.ts.
+
+Ajouter des décorateurs au niveau des DTOs et des contrôleurs comme dans les slides.
+
+Importer dans Postman le JSON présent à l'URL http://localhost:3000/api-json
+
+## Exercice 8 : Relations
+
+Ajouter les relations aux classes Product et Order en utilisant TypeORM.
+
+Ajouter les propriétés dans les DTOs CreateProductDto (categoryId), CreateOrderDto (userId, orderId)
+
+Retourner les entités liées dans les méthodes getAll et getById des services.
+
+Faire en sorte que les méthodes getProductsByCategory, getOrdersByUser soient implementées.

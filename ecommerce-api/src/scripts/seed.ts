@@ -1,15 +1,20 @@
 import { fakerFR as faker } from '@faker-js/faker';
+import { ConsoleLogger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { OrderEntity } from 'src/shop/entity/order.entity';
-import { ProductEntity } from 'src/shop/entity/product.entity';
-import { UserEntity } from 'src/user/entity/user.entity';
 import { DataSource, EntityManager } from 'typeorm';
 
 import { AppModule } from '../app.module';
 import { CategoryEntity } from '../shop/entity/category.entity';
+import { OrderEntity } from '../shop/entity/order.entity';
+import { ProductEntity } from '../shop/entity/product.entity';
+import { UserEntity } from '../user/entity/user.entity';
 
 async function bootstrap() {
-  const app = await NestFactory.createApplicationContext(AppModule);
+  const app = await NestFactory.createApplicationContext(AppModule, {
+    logger: new ConsoleLogger({
+      colors: false,
+    }),
+  });
 
   const entityManager = app.get(EntityManager);
 
