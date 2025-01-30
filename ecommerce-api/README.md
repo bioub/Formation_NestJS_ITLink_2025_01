@@ -144,3 +144,28 @@ Associer à cette clé le service suivant :
 ```
 
 Injecter ce service de config dans `ProductService` de sorte a ce que la méthode `search` ait accès aux champs de recherche (les logguer à ce stade).
+
+## Exercice 6: Configuration et TypeORM
+
+Installer @nestjs/config puis créer un fichier .env avec les variables de configuration suivantes :
+- JWT_SECRET : string
+- DB_TYPE : 'sqlite'
+- DB_DATABASE : 'chemin_vers_le_fichier.sqlite'
+
+Installer @nestjs/typeorm puis le configurer avec une base de données SQLite (dans /data/db.sqlite), s'inspirer de cette documentation :
+https://docs.nestjs.com/techniques/database#async-configuration
+
+Modifier les classes Product, Category, Order, User pour qu'elles soient correspondantes avec les entités TypeORM.
+
+Créer un script en s'inspirant de cette documentation :
+https://docs.nestjs.com/standalone-applications#standalone-applications
+
+Il faudra récupérer le service EntityManager pour insérer les entités.
+
+Dans ce script, vous devez générer des fixtures pour les classes Product, Category, Order, User.
+
+Utiliser éventuellement une library pour générer des fixtures, par exemple : https://www.npmjs.com/package/@faker-js/faker
+
+Injecter les repository dans nos services ProductService, OrderService, CategoryService et UserService, utiliser les méthodes des repository pour lire, ajouter, modifier, supprimer les entités.
+
+Appeler ces services dans les contrôleurs, ajouter les exceptions NotFoundException si l'enregistrement en introuvable (pour les @Param('id'))
