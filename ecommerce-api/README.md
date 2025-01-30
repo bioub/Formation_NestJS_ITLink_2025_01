@@ -102,3 +102,45 @@ Ajouter aussi les routes pour les relations :
 Ajouter le query parameter search dans la route `getProducts`.
 
 Retourner des exemples correspondants aux classes définies ci-dessus.
+
+## Exercice 5: Services
+
+Générer avec la commande `nest generate service <nom>` les services suivants :
+- ProductService (src/shop/product.service.ts)
+- CategoryService (src/shop/category.service.ts)
+- OrderService (src/shop/order.service.ts)
+- UserService (src/user/user.service.ts)
+
+Ajouter les methodes CRUD correspondantes :
+- ProductService :
+  - `getAll` retourne tous les produits
+  - `getById` retourne un produit par son id
+  - `search` retourne les produits à partir de la recherche reçue en paramètre
+  - `create` crée un nouveau produit
+  - `update` modifie un produit existant
+  - `delete` supprime un produit
+- CategoryService :
+  - `getAll` retourne tous les categories
+  - `create` crée une nouvelle category
+  - `delete` supprime une category
+- OrderService :
+  - `getAll` retourne toutes les commandes
+  - `create` crée un nouveau commande
+  - `delete` supprime une commande
+- UserService :
+  - `getAll` retourne tous les users
+  - `getById` retourne un user par son id
+  - `create` crée un nouveau user
+  - `update` modifie un user existant
+  - `delete` supprime un user
+
+Créer un module ConfigModule et y déclarer un provider dont la clé sera la chaine de caractère "CONFIG".
+
+Associer à cette clé le service suivant :
+```
+{
+  searchFields: ['name'], // pourrait être ['name', 'description']
+}
+```
+
+Injecter ce service de config dans `ProductService` de sorte a ce que la méthode `search` ait accès aux champs de recherche (les logguer à ce stade).

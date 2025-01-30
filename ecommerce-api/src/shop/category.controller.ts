@@ -1,12 +1,21 @@
-import { Controller, Get, Post, Body, Delete, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Delete,
+  Param,
+  Req,
+} from '@nestjs/common';
 import { CategoryEntity } from './entity/category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { ProductEntity } from './entity/product.entity';
+import { Request } from 'express';
 
 @Controller('categories')
 export class CategoryController {
   @Get()
-  getCategories(): CategoryEntity[] {
+  getCategories(@Req() req: Request): CategoryEntity[] {
     // TODO: Implémenter la logique
     return [];
   }
@@ -16,7 +25,7 @@ export class CategoryController {
     // TODO: Implémenter la logique
     return {
       id: 1,
-      ...createCategoryDto
+      ...createCategoryDto,
     };
   }
 
