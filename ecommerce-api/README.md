@@ -186,3 +186,15 @@ Ajouter les propriétés dans les DTOs CreateProductDto (categoryId), CreateOrde
 Retourner les entités liées dans les méthodes getAll et getById des services.
 
 Faire en sorte que les méthodes getProductsByCategory, getOrdersByUser soient implementées.
+
+## Exercice 9: Validation
+
+Ajouter les décorateurs de class-validator aux classes CreateProductDto, CreateCategoryDto, CreateOrderDto, CreateUserDto pour valider leurs propriétés.
+
+Tous les champs sont obligatoires, valider leur types.
+
+Dans CreateProductDto :
+- name doit faire minimum 3 caractères
+- price doit être un nombre > 0.01
+
+Configurer ValidationPipe pour utiliser class-validator.

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { CreateProductDto } from './dto/create-product.dto';
@@ -6,6 +6,7 @@ import { ProductEntity } from './entity/product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CategoryEntity } from './entity/category.entity';
+import { CategoryService } from './category.service';
 
 @Injectable()
 export class ProductService {
@@ -13,6 +14,7 @@ export class ProductService {
     private readonly configService: ConfigService,
     @InjectRepository(ProductEntity)
     private readonly productRepository: Repository<ProductEntity>,
+    private readonly categoryService: CategoryService,
   ) {}
 
   async getAll(): Promise<ProductEntity[]> {
@@ -43,6 +45,20 @@ export class ProductService {
   }
 
   async create(product: CreateProductDto): Promise<ProductEntity> {
+    const productEntity: Omit<ProductEntity, 'id'> = {
+      name: product.name,
+      description: product.description,
+      price: product.price,
+    };
+
+    if (product.categoryId) {
+      const category = await this.categoryService.getById(product.categoryId);
+      if (!category) {
+        throw new UnprocessableEntityException('Category not found');
+      }
+      productEntity.category = category;
+    }
+
     return this.productRepository.save(product);
   }
 

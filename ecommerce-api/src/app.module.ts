@@ -21,7 +21,7 @@ import { UserModule } from './user/user.module';
         database: configService.get('DB_DATABASE'),
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: true,
-        logger: 'debug',
+        logging: true,
       }),
     }),
   ],
