@@ -1,4 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  NotFoundException,
+  UseInterceptors,
+  ClassSerializerInterceptor,
+  Logger,
+} from '@nestjs/common';
 import { UserEntity } from './entity/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
@@ -6,7 +18,11 @@ import { OrderEntity } from 'src/shop/entity/order.entity';
 import { OrderService } from 'src/shop/order.service';
 
 @Controller('users')
+@UseInterceptors(ClassSerializerInterceptor)
 export class UserController {
+
+  private readonly logger = new Logger(UserController.name);
+
   constructor(
     private readonly userService: UserService,
     private readonly orderService: OrderService,
@@ -14,6 +30,7 @@ export class UserController {
 
   @Get()
   async getProducts(): Promise<UserEntity[]> {
+    this.logger.debug('getProducts');
     return this.userService.getAll();
   }
 
