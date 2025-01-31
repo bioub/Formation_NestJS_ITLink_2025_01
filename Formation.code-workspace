@@ -8,6 +8,9 @@
 		},
 		{
 			"path": "Node.js"
+		},
+		{
+			"path": "graphql-api"
 		}
 	],
 	"settings": {}
