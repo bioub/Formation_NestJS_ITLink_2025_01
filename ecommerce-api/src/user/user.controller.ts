@@ -14,8 +14,8 @@ import {
 import { UserEntity } from './entity/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
-import { OrderEntity } from 'src/shop/entity/order.entity';
-import { OrderService } from 'src/shop/order.service';
+import { OrderEntity } from '../shop/entity/order.entity';
+import { OrderService } from '../shop/order.service';
 
 @Controller('users')
 @UseInterceptors(ClassSerializerInterceptor)
